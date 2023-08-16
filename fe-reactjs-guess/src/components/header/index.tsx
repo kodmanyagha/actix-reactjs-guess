@@ -1,11 +1,9 @@
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
-import withReactContent from "sweetalert2-react-content";
-import { removeToken } from "../../redux/authSlice";
-import { AppStateType, useAppDispatch } from "../../redux/store";
+import { removeToken } from "../../features/state/authSlice";
+import { AppStateType, useAppDispatch } from "../../features/state/store";
+import { swal } from "../../features/types";
 
-const MySwal = withReactContent(Swal);
 
 export default function Header() {
   const authState = useSelector((state: AppStateType) => state.authState);
@@ -38,13 +36,13 @@ export default function Header() {
                   to="/user"
                   className="me-3 py-2 link-body-emphasis text-decoration-none"
                 >
-                  <strong>{authState.user.fullname}</strong>
+                  <strong>{authState.user.firstname ?? "" + " " + authState.user.lastname ?? ""}</strong>
                 </Link>
                 <a
                   href="#"
                   className="py-2 link-body-emphasis text-decoration-none"
                   onClick={(e) => {
-                    MySwal.fire({
+                    swal.fire({
                       title: <p>Çıkış yapmak istediğinize emin misiniz?</p>,
                       icon: "question",
                       showCancelButton: true,

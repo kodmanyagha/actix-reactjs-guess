@@ -7,7 +7,7 @@ import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 
 import ThemeContextProvider from "./context/theme-context";
-import store from "./redux/store";
+import store from "./features/state/store";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>

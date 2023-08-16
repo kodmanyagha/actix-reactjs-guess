@@ -1,15 +1,16 @@
+import { unwrapResult } from "@reduxjs/toolkit";
 import { useEffect } from "react";
 import { Col, Row } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { useNavigate } from "react-router-dom";
-import useApi from "../../../hooks/useApi";
-import { setToken, setUser } from "../../../redux/authSlice";
-import { useAppDispatch } from "../../../redux/store";
+import { loginAction } from "../../../features/state/authSlice";
+import { useAppDispatch } from "../../../features/state/store";
+import { handleAuthResult } from "../../../features/types";
+
 
 export default function LoginPage() {
   const navigate = useNavigate();
-  const api = useApi();
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -21,16 +22,13 @@ export default function LoginPage() {
   async function onFormSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    const formJson = Object.fromEntries(new FormData(e.currentTarget).entries());
-    const loginResult = await api.post("auth/login", formJson);
+    const formJson = { ...Object.fromEntries(new FormData(e.currentTarget).entries()) };
 
-    if (loginResult.data.status === "success") {
-      dispatch(setToken(loginResult.data.data.token));
-      dispatch(setUser(loginResult.data.data.userData));
-
-      navigate("/user");
-    } else {
-      alert("Please check your credentials.");
+    try {
+      const result = unwrapResult(await dispatch(loginAction(formJson)));
+      handleAuthResult(result, navigate);
+    } catch (e) {
+      handleAuthResult(e, navigate);
     }
   }
 
@@ -39,15 +37,15 @@ export default function LoginPage() {
       <Row className="justify-content-center">
         <Col sm="12" md="12" lg="6">
           <Form onSubmit={onFormSubmit}>
-            <Form.Group className="mb-3" controlId="loginForm.email">
-              <Form.Label>Email address</Form.Label>
+            <Form.Group className="mb-3" controlId="loginForm.username">
+              <Form.Label>Username</Form.Label>
               <Form.Control
                 onChange={(e) => {
                   e.target.value;
                 }}
-                type="email"
-                name="email"
-                placeholder="name@example.com"
+                type="text"
+                name="username"
+                placeholder="Your username"
               />
             </Form.Group>
             <Form.Group className="mb-3" controlId="loginForm.password">

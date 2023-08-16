@@ -12,11 +12,12 @@ import RegisterPage from "./pages/auth/register-page";
 
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
+import { setUser } from "./features/state/authSlice";
+import { AppStateType, useAppDispatch } from "./features/state/store";
 import useApi from "./hooks/useApi";
 import MainPage from "./pages/main-page";
 import UserDashboardPage from "./pages/user/user-dashboard-page";
-import { setUser } from "./redux/authSlice";
-import { AppStateType, useAppDispatch } from "./redux/store";
+
 
 function App() {
   const authState = useSelector((state: AppStateType) => state.authState);

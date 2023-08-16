@@ -1,13 +1,13 @@
+import { unwrapResult } from "@reduxjs/toolkit";
 import { useEffect } from "react";
 import { Button, Col, Form, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import useApi from "../../../hooks/useApi";
-import { registerAction } from "../../../redux/authSlice";
-import { useAppDispatch } from "../../../redux/store";
+import { registerAction } from "../../../features/state/authSlice";
+import { useAppDispatch } from "../../../features/state/store";
+import { handleAuthResult } from "../../../features/types";
 
 export default function RegisterPage() {
   const navigate = useNavigate();
-  const api = useApi();
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -20,9 +20,10 @@ export default function RegisterPage() {
     e.preventDefault();
 
     const formJson = { ...Object.fromEntries(new FormData(e.currentTarget).entries()) };
-    const result = await dispatch(registerAction(formJson));
+    const result = unwrapResult(await dispatch(registerAction(formJson)));
     console.log(">>>  result:", result);
-    //navigate("/user");
+
+    handleAuthResult(result, navigate);
   }
 
   return (

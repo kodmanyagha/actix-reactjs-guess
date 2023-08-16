@@ -1,6 +1,6 @@
 import Dropdown from "react-bootstrap/Dropdown";
 import { useSelector } from "react-redux";
-import { AppStateType } from "../../../redux/store";
+import { AppStateType } from "../../../features/state/store";
 
 export default function UserDashboardPage() {
   const authState = useSelector((state: AppStateType) => state.authState);

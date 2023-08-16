@@ -3,7 +3,7 @@ use std::sync::Arc;
 use anyhow::Result;
 use chrono::{Duration, Utc};
 use rand::distributions::{Alphanumeric, DistString};
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
 use crate::{
@@ -22,6 +22,12 @@ pub enum LoginError {
     UserNotFound,
     #[error("Wrong credentials.")]
     WrongCredentials,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct LoginResponse {
+    token: String,
+    user: User,
 }
 
 pub async fn login(body: LoginRequest, data: Arc<AppState>) -> Result<impl Serialize, LoginError> {
@@ -44,7 +50,10 @@ pub async fn login(body: LoginRequest, data: Arc<AppState>) -> Result<impl Seria
 
     Ok(SingleResponse {
         status: "success".to_string(),
-        data: hash,
+        data: LoginResponse {
+            token: hash,
+            user: user.clone(),
+        },
     })
 }
 
@@ -107,6 +116,9 @@ pub async fn register(
 
     Ok(SingleResponse {
         status: "success".to_string(),
-        data: hash,
+        data: LoginResponse {
+            token: hash,
+            user: user.clone(),
+        },
     })
 }

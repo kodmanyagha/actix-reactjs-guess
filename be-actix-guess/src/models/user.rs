@@ -6,7 +6,10 @@ use std::string::ToString;
 pub struct User {
     pub id: u64,
     pub username: String,
+
+    #[serde(skip_serializing)]
     pub password: String,
+
     pub gender: Option<Gender>,
     pub firstname: Option<String>,
     pub lastname: Option<String>,
