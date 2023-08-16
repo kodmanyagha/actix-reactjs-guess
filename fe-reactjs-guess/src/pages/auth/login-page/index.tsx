@@ -1,5 +1,4 @@
 import { unwrapResult } from "@reduxjs/toolkit";
-import { useEffect } from "react";
 import { Col, Row } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
@@ -8,23 +7,15 @@ import { loginAction } from "../../../features/state/authSlice";
 import { useAppDispatch } from "../../../features/state/store";
 import { handleAuthResult } from "../../../features/types";
 
-
 export default function LoginPage() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  useEffect(() => {
-    (async () => {
-      //
-    })();
-  }, []);
-
   async function onFormSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    const formJson = { ...Object.fromEntries(new FormData(e.currentTarget).entries()) };
-
     try {
+      const formJson = { ...Object.fromEntries(new FormData(e.currentTarget).entries()) };
       const result = unwrapResult(await dispatch(loginAction(formJson)));
       handleAuthResult(result, navigate);
     } catch (e) {

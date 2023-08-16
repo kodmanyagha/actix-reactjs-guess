@@ -1,5 +1,5 @@
 import { NavigateFunction } from "react-router-dom";
-import Swal, { SweetAlertResult } from "sweetalert2";
+import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import { User } from "./state/authSlice";
 
@@ -7,7 +7,7 @@ export type BaseApiResponse<T> = {
   status: "fail" | "success";
   data?: T;
   message?: string;
-};
+}
 
 export type AuthSuccessResult = {
   token: string,
@@ -16,41 +16,30 @@ export type AuthSuccessResult = {
 
 export const swal = withReactContent(Swal);
 
-export const handleAuthResult = (result: BaseApiResponse<AuthSuccessResult> | unknown, navigate: NavigateFunction) => {
-  console.log(">> result", result)
+export const showSuccessAlert = async (body?: string, title?: string) => {
+  return swal
+    .fire({
+      title: <strong>{title ?? "Success!"}</strong>,
+      html: body,
+      icon: "success",
+    })
+}
 
+export const showErrorAlert = async (body?: string, title?: string) => {
+  return swal
+    .fire({
+      title: <strong>{title ?? "Error!"}</strong>,
+      html: body,
+      icon: "error",
+    })
+}
+
+export const handleAuthResult = async (result: BaseApiResponse<AuthSuccessResult> | unknown, navigate: NavigateFunction) => {
   if (result instanceof Error) {
-    swal
-      .fire({
-        title: <p>{result.message}</p>,
-        icon: "info",
-      })
-      .then((result: SweetAlertResult) => {
-        console.log(">>>  result:", result);
-
-        if (result.isConfirmed) {
-          console.log("Confirmed.");
-        } else {
-          console.log("Not confirmed.");
-        }
-      });
-
+    showErrorAlert(result.message)
   } else if (typeof result === "object") {
-    swal
-      .fire({
-        title: <p>Login success, redirecting.</p>,
-        icon: "success",
-      })
-      .then((result: SweetAlertResult) => {
-        console.log(">>>  result:", result);
-
-        if (result.isConfirmed) {
-          console.log("Confirmed.");
-        } else {
-          console.log("Not confirmed.");
-        }
-      });
+    showSuccessAlert("Operation success.")
 
     setTimeout(() => navigate("/user"), 2000);
   }
-};
+}

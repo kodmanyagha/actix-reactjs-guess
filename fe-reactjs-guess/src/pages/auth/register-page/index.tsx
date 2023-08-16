@@ -1,5 +1,4 @@
 import { unwrapResult } from "@reduxjs/toolkit";
-import { useEffect } from "react";
 import { Button, Col, Form, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { registerAction } from "../../../features/state/authSlice";
@@ -10,20 +9,16 @@ export default function RegisterPage() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  useEffect(() => {
-    (async () => {
-      //
-    })();
-  }, []);
-
   async function onFormSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    const formJson = { ...Object.fromEntries(new FormData(e.currentTarget).entries()) };
-    const result = unwrapResult(await dispatch(registerAction(formJson)));
-    console.log(">>>  result:", result);
-
-    handleAuthResult(result, navigate);
+    try {
+      const formJson = { ...Object.fromEntries(new FormData(e.currentTarget).entries()) };
+      const result = unwrapResult(await dispatch(registerAction(formJson)));
+      handleAuthResult(result, navigate);
+    } catch (e) {
+      handleAuthResult(e, navigate);
+    }
   }
 
   return (
