@@ -17,7 +17,7 @@ async fn main() -> std::io::Result<()> {
     let app_data = web::Data::new(AppState::new());
 
     println!(
-        "🚀 Server started successfully at http://{}:{}",
+        "🚀 Server started at http://{}:{}",
         server_host, server_port
     );
 
