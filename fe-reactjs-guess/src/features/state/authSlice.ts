@@ -1,6 +1,10 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { createApiInstance } from "../../hooks/useApi";
-import { AuthSuccessResult, BaseApiResponse } from "../types";
+import {
+  AppDataSuccessResult,
+  AuthSuccessResult,
+  BaseApiResponse,
+} from "../types";
 
 export type User = {
   id: number;
@@ -23,15 +27,31 @@ const initialState: AuthStateType = {
   user: null,
 };
 
-function handleResponse(response: BaseApiResponse<AuthSuccessResult>) {
-  console.log(">> Handling resp", response);
+export const getAppDataAction = createAsyncThunk(
+  "authSlice/getAppDataActionThunk",
+  async (
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    _ = undefined,
+    {
+      // dispatch,
+      // getState,
+      fulfillWithValue,
+      rejectWithValue,
+    }
+  ) => {
+    const api = createApiInstance();
 
-  if (typeof response.data === "object" && response.status === "success") {
-    return response;
-  } else {
-    throw new Error(typeof response === "object" ? response.message : response);
+    const response = await api.get<BaseApiResponse<AppDataSuccessResult>>(
+      "/api/v1/appData"
+    );
+
+    if (response.data.status === "success") {
+      return fulfillWithValue(response.data.data);
+    } else {
+      return rejectWithValue(response.data.message);
+    }
   }
-}
+);
 
 export const loginAction = createAsyncThunk(
   "authSlice/loginActionThunk",
@@ -40,7 +60,7 @@ export const loginAction = createAsyncThunk(
     {
       // dispatch,
       // getState,
-      // fulfillWithValue,
+      fulfillWithValue,
       rejectWithValue,
     }
   ) => {
@@ -50,10 +70,10 @@ export const loginAction = createAsyncThunk(
       "/api/v1/auth/login",
       postData
     );
-    try {
-      return handleResponse(response.data);
-    } catch (e) {
-      return rejectWithValue(e);
+    if (response.data.status === "success") {
+      return fulfillWithValue(response.data.data);
+    } else {
+      return rejectWithValue(response.data.message);
     }
   }
 );
@@ -65,7 +85,7 @@ export const registerAction = createAsyncThunk(
     {
       // dispatch,
       // getState,
-      // fulfillWithValue,
+      fulfillWithValue,
       rejectWithValue,
     }
   ) => {
@@ -76,10 +96,10 @@ export const registerAction = createAsyncThunk(
       postData
     );
 
-    try {
-      return handleResponse(response.data);
-    } catch (e) {
-      return rejectWithValue(e);
+    if (response.data.status === "success") {
+      return fulfillWithValue(response.data.data);
+    } else {
+      return rejectWithValue(response.data.message);
     }
   }
 );
@@ -105,6 +125,17 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(getAppDataAction.pending, (state, action) => {
+        console.log("getAppDataAction.pending", state, action);
+      })
+      .addCase(getAppDataAction.rejected, (state, action) => {
+        console.log("getAppDataAction.rejected", state, action);
+      })
+      .addCase(getAppDataAction.fulfilled, (state, action) => {
+        console.log("getAppDataAction.fulfilled", state, action);
+        state.token = action.payload?.token;
+        state.user = action.payload?.user;
+      })
       .addCase(registerAction.pending, (state, action) => {
         console.log("registerThunk.pending", state, action);
 
@@ -120,16 +151,11 @@ const authSlice = createSlice({
       .addCase(registerAction.fulfilled, (state, action) => {
         console.log("registerThunk.fulfilled", state, action);
 
-        if (action.payload.status === "success") {
-          localStorage.setItem(
-            "authToken",
-            action.payload.data?.token as string
-          );
+        localStorage.setItem("authToken", action.payload.token as string);
 
-          state.token = action.payload.data?.token as string;
-          state.user = action.payload.data?.user as User;
-          state.status = "logged_in";
-        }
+        state.token = action.payload.token as string;
+        state.user = action.payload.user as User;
+        state.status = "logged_in";
       })
       .addCase(loginAction.pending, (state, action) => {
         console.log("loginAction.pending", state, action);
@@ -145,16 +171,11 @@ const authSlice = createSlice({
       .addCase(loginAction.fulfilled, (state, action) => {
         console.log("loginAction.fulfilled", state, action);
 
-        if (action.payload.status === "success") {
-          localStorage.setItem(
-            "authToken",
-            action.payload.data?.token as string
-          );
+        localStorage.setItem("authToken", action.payload.token as string);
 
-          state.token = action.payload.data?.token as string;
-          state.user = action.payload.data?.user as User;
-          state.status = "logged_in";
-        }
+        state.token = action.payload.token as string;
+        state.user = action.payload.user as User;
+        state.status = "logged_in";
       });
   },
 });

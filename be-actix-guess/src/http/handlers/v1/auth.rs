@@ -2,6 +2,7 @@ use actix_web::{post, web, HttpResponse, Responder};
 use serde::{Deserialize, Serialize};
 
 use crate::{
+    http::middlewares::auth_middleware_fn,
     models::app_state::AppState,
     response::GenericResponse,
     services::auth_service::{self, RegisterError},
@@ -19,7 +20,7 @@ pub struct RegisterRequest {
     pub password: String,
 }
 
-#[post("/auth/login")]
+#[post("/login")]
 async fn login_handler(
     req_data: web::Json<LoginRequest>,
     state: web::Data<AppState>,
@@ -35,7 +36,7 @@ async fn login_handler(
     }
 }
 
-#[post("/auth/register")]
+#[post("/register")]
 async fn register_handler(
     req_data: web::Json<RegisterRequest>,
     state: web::Data<AppState>,
@@ -66,7 +67,7 @@ async fn register_handler(
 }
 
 pub fn add_routes(conf: &mut web::ServiceConfig) {
-    let scope = web::scope("/api/v1")
+    let scope = web::scope("/api/v1/auth")
         .service(login_handler)
         .service(register_handler);
 

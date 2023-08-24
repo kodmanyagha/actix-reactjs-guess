@@ -6,7 +6,7 @@ use crate::{
     services::v1::rooms_service,
 };
 
-#[get("/rooms")]
+#[get("/")]
 pub async fn rooms_list_handler(
     req_data: web::Query<PaginationRequest>,
     state: web::Data<AppState>,
@@ -20,7 +20,7 @@ pub async fn rooms_list_handler(
     }
 }
 
-#[post("/rooms")]
+#[post("/")]
 async fn create_room_handler(
     req_data: web::Json<CreateGuessRoomRequest>,
     http_req: HttpRequest,
@@ -37,7 +37,7 @@ async fn create_room_handler(
 }
 
 pub fn add_routes(conf: &mut web::ServiceConfig) {
-    let scope = web::scope("/api/v1")
+    let scope = web::scope("/api/v1/rooms")
         .service(rooms_list_handler)
         .service(create_room_handler);
 

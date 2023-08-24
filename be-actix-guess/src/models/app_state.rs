@@ -10,12 +10,15 @@ use crate::models::{guess::GuessRoom, user::User};
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct Token {
     pub user_id: u64,
-    pub valid_at: DateTime<Utc>,
+    pub valid_until: DateTime<Utc>,
 }
 
 impl Token {
-    pub fn new(user_id: u64, valid_at: DateTime<Utc>) -> Self {
-        Token { user_id, valid_at }
+    pub fn new(user_id: u64, valid_until: DateTime<Utc>) -> Self {
+        Token {
+            user_id,
+            valid_until,
+        }
     }
 }
 

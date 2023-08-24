@@ -15,7 +15,7 @@ export function createApiInstance() {
 
   const authToken = localStorage.getItem("authToken");
   if (authToken) {
-    api.defaults.headers.common["Authorization"] = "Bearer " + authToken;
+    api.defaults.headers.common["Authorization"] = authToken;
   }
 
   return api;

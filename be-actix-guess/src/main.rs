@@ -1,7 +1,8 @@
 use actix_cors::Cors;
-use actix_web::middleware::Logger;
-use actix_web::{http::header, web, App, HttpServer};
+use actix_web::{http::header, middleware::Logger, web, App, HttpServer};
+use actix_web_lab::middleware::from_fn;
 use be_actix_guess::http::handlers;
+use be_actix_guess::http::middlewares::auth_middleware_fn;
 use be_actix_guess::models::app_state::AppState;
 
 #[actix_web::main]
@@ -39,13 +40,15 @@ async fn main() -> std::io::Result<()> {
 
         App::new()
             .app_data(app_data.clone())
+            .wrap(from_fn(auth_middleware_fn::auth_middleware))
+            //.wrap(auth_middleware::Logging)
+            .wrap(cors)
+            .wrap(Logger::default())
             .configure(|conf: &mut web::ServiceConfig| {
                 handlers::v1::auth::add_routes(conf);
                 handlers::v1::rooms::add_routes(conf);
                 handlers::v1::index::add_routes(conf);
             })
-            .wrap(cors)
-            .wrap(Logger::default())
     })
     .bind((server_host, server_port))?
     .run()

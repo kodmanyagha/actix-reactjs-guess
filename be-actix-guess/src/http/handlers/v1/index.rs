@@ -1,6 +1,10 @@
-use actix_web::{get, web, HttpResponse};
+use actix_web::{get, web, HttpRequest, HttpResponse};
 
-use crate::response::GenericResponse;
+use crate::{
+    models::app_state::AppState,
+    response::{GenericResponse, SingleResponse},
+    services::v1::index_service,
+};
 
 #[get("/healthcheck")]
 pub async fn health_check_handler() -> HttpResponse {
@@ -11,8 +15,30 @@ pub async fn health_check_handler() -> HttpResponse {
     HttpResponse::Ok().json(response_json)
 }
 
+#[get("/appData")]
+pub async fn app_data_handler(
+    app_state: web::Data<AppState>,
+    http_req: HttpRequest,
+) -> HttpResponse {
+    let app_data = index_service::get_app_data(http_req, app_state.into_inner()).await;
+
+    if let Ok(app_data) = app_data {
+        HttpResponse::Ok().json(SingleResponse {
+            status: "success".to_owned(),
+            data: app_data,
+        })
+    } else {
+        HttpResponse::Ok().json(SingleResponse::<Option<()>> {
+            status: "success".to_owned(),
+            data: None,
+        })
+    }
+}
+
 pub fn add_routes(conf: &mut web::ServiceConfig) {
-    let scope = web::scope("/api").service(health_check_handler);
+    let scope = web::scope("/api/v1")
+        .service(health_check_handler)
+        .service(app_data_handler);
 
     conf.service(scope);
 }

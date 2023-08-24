@@ -51,16 +51,11 @@ export default function UserDashboardPage() {
             <Dropdown.Toggle
               className="align-items-center w-100 text-decoration-none dropdown-toggle"
               variant="primary"
-              id="dropdown-basic"
+              id="userMenuDropdown"
             >
-              <img
-                src="https://github.com/kodmanyagha"
-                alt=""
-                width="32"
-                height="32"
-                className="rounded-circle me-2"
-              />
-              <strong>{authState.user?.fullname}</strong>
+              <i className="fa-solid fa-user me-1" />
+
+              <strong>{authState.user?.firstname + " " + authState.user?.lastname}</strong>
             </Dropdown.Toggle>
 
             <Dropdown.Menu>

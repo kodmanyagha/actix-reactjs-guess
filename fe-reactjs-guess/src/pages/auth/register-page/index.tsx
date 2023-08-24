@@ -53,7 +53,7 @@ export default function RegisterPage() {
               />
             </Form.Group>
             <Form.Group className="mb-3" controlId="registerForm.lastname">
-              <Form.Label>Email address</Form.Label>
+              <Form.Label>Lastname</Form.Label>
               <Form.Control
                 type="text"
                 name="lastname"

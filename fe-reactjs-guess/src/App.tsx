@@ -12,24 +12,20 @@ import RegisterPage from "./pages/auth/register-page";
 
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
-import { setUser } from "./features/state/authSlice";
+import { getAppDataAction } from "./features/state/authSlice";
 import { AppStateType, useAppDispatch } from "./features/state/store";
-import useApi from "./hooks/useApi";
 import MainPage from "./pages/main-page";
 import UserDashboardPage from "./pages/user/user-dashboard-page";
 
 
 function App() {
   const authState = useSelector((state: AppStateType) => state.authState);
-
-  const api = useApi();
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     (async () => {
       if (authState.token && !authState.user) {
-        const userResponse = await api.get("user/appData");
-        dispatch(setUser(userResponse.data.data.user));
+        dispatch(getAppDataAction());
       }
     })();
   }, []);

@@ -15,6 +15,8 @@ use crate::{
     response::SingleResponse,
 };
 
+use super::GeneralError;
+
 #[non_exhaustive]
 #[derive(Debug, Error)]
 pub enum LoginError {
@@ -65,6 +67,19 @@ pub fn create_auth_token(tokens: &mut TokenHashMap, user_id: u64, duration_hour:
     );
 
     hash_result
+}
+
+pub fn get_user_from_token(app_state: Arc<AppState>, token_str: &str) -> anyhow::Result<User> {
+    let tokens = app_state.tokens.lock().unwrap();
+    let users = app_state.users.lock().unwrap();
+
+    let token = tokens.get(token_str).ok_or(GeneralError::NotFoundError)?;
+
+    Ok(users
+        .iter()
+        .find(|user| user.id == token.user_id)
+        .ok_or(GeneralError::NotFoundError)?
+        .clone())
 }
 
 #[non_exhaustive]

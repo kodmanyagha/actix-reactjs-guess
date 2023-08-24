@@ -4,12 +4,19 @@ import withReactContent from "sweetalert2-react-content";
 import { User } from "./state/authSlice";
 
 export type BaseApiResponse<T> = {
-  status: "fail" | "success";
-  data?: T;
-  message?: string;
+  status: "fail";
+  message: string;
+} | {
+  status: "success";
+  data: T;
 }
 
 export type AuthSuccessResult = {
+  token: string,
+  user: User
+}
+
+export type AppDataSuccessResult = {
   token: string,
   user: User
 }
