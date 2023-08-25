@@ -1,5 +1,5 @@
 use actix_http::{body::MessageBody, header::HeaderMap, HttpMessage};
-use actix_web::{dev, Error};
+use actix_web::{dev, web::Data, Error};
 use actix_web_lab::middleware::Next;
 use thiserror::Error;
 
@@ -39,24 +39,14 @@ pub async fn auth_middleware(
         println!("Token result err: {:?}", err);
     }
 
-    // this is working:
-    Ok(next.call(req).await?)
-
-    //    let x = next.call(req).await?;
-    //    match next.call(req).await? {
-    //        Ok(res) => match res {
-    //            Ok(res) => res,
-    //            Err(_err) => Err(actix_web::error::ErrorUnauthorized("")),
-    //        },
-    //        Err(_err) => Err(actix_web::error::ErrorUnauthorized("")),
-    //    }
+    next.call(req).await
 }
 
 pub fn find_token_from_request(
     req: &dev::ServiceRequest,
 ) -> anyhow::Result<Token, HeaderValidationError> {
     let state: &AppState =
-        req.app_data::<AppState>()
+        req.app_data::<Data<AppState>>()
             .ok_or(HeaderValidationError::GeneralError(
                 "app_data is not reachable.".to_owned(),
             ))?;
