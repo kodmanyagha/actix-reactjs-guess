@@ -3,7 +3,7 @@ use std::sync::Arc;
 use actix_web::HttpRequest;
 
 use crate::{
-    http::middlewares::auth_middleware_fn::get_auth_header,
+    http::middlewares::auth_middleware::get_auth_header,
     models::{app_state::AppState, user::User},
     services::auth_service::get_user_from_token,
 };

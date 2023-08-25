@@ -2,7 +2,6 @@ use actix_web::{post, web, HttpResponse, Responder};
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    http::middlewares::auth_middleware_fn,
     models::app_state::AppState,
     response::GenericResponse,
     services::auth_service::{self, RegisterError},
