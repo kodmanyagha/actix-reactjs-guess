@@ -74,8 +74,6 @@ pub fn get_auth_header(headers: &HeaderMap) -> anyhow::Result<&str, HeaderValida
         .ok_or(HeaderValidationError::AuthHeaderNotFound)?
         .trim();
 
-    println!("get_auth_header header_str: {:?}", header_str);
-
     if header_str.is_empty() {
         Err(HeaderValidationError::AuthHeaderCanNotBeEmpty)
     } else {
